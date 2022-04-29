@@ -74,7 +74,9 @@ namespace VD_QLNS
             txtTen.Clear();
             txtMaNV.Clear();
             txtHSL.Clear();
+
             txtTen.Focus();
+
             data.DataSource = ds.Tables["NHANVIEN"];
         }
 
@@ -97,7 +99,63 @@ namespace VD_QLNS
 
             DataTable dt = new DataTable();
             da.Fill(dt);
+
             data.DataSource = dt;
+        }
+
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+            if (kTraMNV(txtMaNV.Text) == 0)
+            {
+                DataTable dt = ds.Tables["NHANVIEN"];
+                DataRow r = dt.NewRow();
+                r[0] = txtMaNV.Text;
+                r[1] = txtTen.Text;
+                r[2] = cboPhongBan.SelectedItem.ToString();
+                r[3] = float.Parse(txtHSL.Text);
+                r[4] = "NV";
+                dt.Rows.Add(r);
+
+                da.Update(ds, "NHANVIEN");
+            }
+            else
+                MessageBox.Show("Bi trung ma nhan vien");
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Ban co chac chan muon xoa?", "thong bao", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if(dr == DialogResult.Yes)
+            {
+                int i = data.CurrentCell.RowIndex;//chon 1 dong tren datagridview
+                DataTable dt = ds.Tables["NHANVIEN"];
+                dt.Rows[i].Delete();
+
+                da.Update(ds, "NHANIEN");
+            }
+        }
+
+        private void data_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int i = data.CurrentCell.RowIndex;
+            txtMaNV.Text = data.Rows[i].Cells[0].Value.ToString();
+            txtTen.Text = data.Rows[i].Cells[1].Value.ToString();
+            cboPhongBan.SelectedValue = data.Rows[i].Cells[2].Value.ToString();
+            txtHSL.Text = data.Rows[i].Cells[3].Value.ToString();
+        }
+
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            int i = data.CurrentCell.RowIndex;
+            DataTable dt = ds.Tables["NHANVIEN"];
+            DataRow r = dt.Rows[i];
+            r[0] = txtMaNV.Text;
+            r[1] = txtTen.Text;
+            r[2] = cboPhongBan.SelectedValue.ToString();
+            r[3] = float.Parse(txtHSL.Text);
+            r[4] = "NV";
+
+            da.Update(ds, "NHANVIEN");
         }
     }
 
